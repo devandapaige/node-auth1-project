@@ -18,23 +18,23 @@ There are two possible ways to submit your project. Your instructor should have 
 - [ ] Push your first commit: `git commit --allow-empty -m "first commit" && git push`.
 - [ ] Check to see that Codegrade has accepted your git submission.
 
-#### Option B - Pull Request
+#### Option B - Pull Request ✅
 
-- [ ] Fork and clone the repository.
-- [ ] Implement your project in a `firstname-lastname` branch.
-- [ ] Create a pull request of `firstname-lastname` against your `main` branch.
-- [ ] Open the assignment in Canvas and submit your pull request.
+- [✅] Fork and clone the repository.
+- [✅] Implement your project in a `firstname-lastname` branch.
+- [✅] Create a pull request of `firstname-lastname` against your `main` branch.
+- [✅] Open the assignment in Canvas and submit your pull request.
 
 ### Task 2: Minimum Viable Product
 
-#### 2A - Database Access Functions
+#### 2A - Database Access Functions ✅
 
 Write the following user access functions inside `api/users/users-model.js`:
 
-- [ ] `find`
-- [ ] `findBy`
-- [ ] `findById`
-- [ ] `add`
+- [✅] `find`
+- [✅] `findBy`
+- [✅] `findById`
+- [✅] `add`
 
 #### 2B - Middleware Functions
 
