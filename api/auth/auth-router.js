@@ -1,6 +1,14 @@
 // Require `checkUsernameFree`, `checkUsernameExists` and `checkPasswordLength`
 // middleware functions from `auth-middleware.js`. You will need them here!
-
+const express = require("express");
+const users = require("../users/users-model");
+const {
+  checkUsernameFree,
+  checkUsernameExists,
+  checkPasswordLength,
+} = require("./auth-middleware");
+const bcrypt = require("bcryptjs");
+const router = express.Router();
 
 /**
   1 [POST] /api/auth/register { "username": "sue", "password": "1234" }
@@ -24,7 +32,27 @@
     "message": "Password must be longer than 3 chars"
   }
  */
-
+router.post(
+  "/register",
+  checkPasswordLength(),
+  checkUsernameFree(),
+  async (req, res, next) => {
+    try {
+      const { username, password } = req.body;
+      const hashedPassword = await bcrypt.hash(
+        password,
+        process.env.HASHED_NUM
+      );
+      const newUser = await users.add({
+        username,
+        password: hashedPassword,
+      });
+      return res.status(200).json(newUser);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 /**
   2 [POST] /api/auth/login { "username": "sue", "password": "1234" }
@@ -41,7 +69,25 @@
     "message": "Invalid credentials"
   }
  */
-
+router.post("/login", checkUsernameExists(), async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    const user = await users.findBy({ username });
+    const passwordValid = await bcrypt.compare(password, user[0].password);
+    if (!passwordValid) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    } else {
+      req.session.chocolateChip = user; // adding the cookie on login
+      return res.json({
+        message: `welcome ${user.username}`,
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
 
 /**
   3 [GET] /api/auth/logout
@@ -58,6 +104,26 @@
     "message": "no session"
   }
  */
-
- 
+router.get("/logout", async (req, res, next) => {
+  try {
+    if (!req.session.user) {
+      return res.status(200).json({
+        message: "logged out",
+      });
+    } else {
+      req.session.destroy((err) => {
+        if (err) {
+          next(err);
+        } else {
+          return res.status(200).json({
+            message: "session destroyed",
+          });
+        }
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
 // Don't forget to add the router to the `exports` object so it can be required in other modules
+module.exports = router;
